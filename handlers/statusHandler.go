@@ -49,7 +49,7 @@ func GetStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 // getAPIStatus checks if the given API is up and returns its status
-func getAPIStatus(apiURL string) int {
+func getAPIStatus(apiURL string) int { // TODO: 404 as valid status return or only 200s?
 	// Send a GET request to the API
 	resp, err := http.Get(apiURL)
 	if err != nil {

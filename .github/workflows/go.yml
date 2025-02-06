@@ -29,6 +29,11 @@ jobs:
         run: |
           go test -v ./...
 
+      - name: Set up golangci-lint
+        uses: golangci/setup-golangci-lint-action@v2
+        with:
+          golangci-lint-version: 'v1.50.1'
+
       - name: Run linters
         run: |
           golangci-lint run
