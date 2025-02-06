@@ -1,14 +1,17 @@
 package main
 
 import (
-	handler "REST-stub/handlers"
+	handler "github.com/SigurdRiseth/CountryInfoService/handlers"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
+
+	handler.StartTime = time.Now() // Initialize start time
 
 	// Load the environment variables
 	err := godotenv.Load(".env")
