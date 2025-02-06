@@ -14,30 +14,26 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: '1.23'
 
       - name: Install dependencies
-        run: |
-          go mod tidy
-
-      - name: Run tests
-        run: |
-          go test -v ./...
+        run: go mod tidy
 
       - name: Install golangci-lint
         run: |
-          curl -sSfL https://github.com/golangci/golangci-lint/releases/download/v1.50.1/golangci-lint-1.50.1-linux-amd64.tar.gz | tar -xzv
-          sudo mv golangci-lint-1.50.1-linux-amd64/golangci-lint /usr/local/bin/
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.1
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
 
       - name: Run linters
-        run: |
-          golangci-lint run
+        run: golangci-lint run
+
+      - name: Run tests
+        run: go test -v ./...
 
       - name: Build the Go project
-        run: |
-          go build -v
+        run: go build -v ./...
