@@ -14,7 +14,7 @@ It uses the following APIs:
   * If you just try to explore the endpoints directly, you might not see much (or even see errors). Use the documentation to understand how the services work!
   * Most of those services are publicly available, but please invoke the hosted versions (i.e., the links above) due to load challenges (I rather have my services go down than the public ones :)). Lodge an issue if they do go down (should not be the case, but we never know).
 
-The application is deployed via Render and can be accessed at https://countryrest.onrender.com/.
+The application is deployed via [Render](https://render.com/) and can be accessed at https://countryrest.onrender.com/.
 
 ## Endpoints
 
