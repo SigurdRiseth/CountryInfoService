@@ -14,9 +14,7 @@ func main() {
 	handler.StartTime = time.Now() // Initialize start time
 
 	// Load environment variables
-	if err := loadEnvVariables(); err != nil {
-		log.Fatalf("Error loading environment variables: %v", err)
-	}
+	loadEnvVariables()
 
 	// Get the port from environment variables, default to 8080
 	port := getPort()
@@ -26,15 +24,14 @@ func main() {
 
 	// Start the server
 	log.Println("Server started on port " + port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(http.ListenAndServe(":"+port, router)) //TODO: Gracefully shutdown server?
 }
 
 // loadEnvVariables loads the environment variables from the .env file
-func loadEnvVariables() error {
+func loadEnvVariables() {
 	if err := godotenv.Load(".env"); err != nil {
-		return err
+		log.Fatalf("Error loading environment variables: %v", err)
 	}
-	return nil
 }
 
 // getPort retrieves the port from the environment variable or defaults to 8080
