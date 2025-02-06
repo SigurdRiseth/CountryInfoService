@@ -3,14 +3,13 @@ package handler
 import (
 	"encoding/json"
 	"github.com/SigurdRiseth/CountryInfoService/utils"
+	"log"
 	"math"
 	"net/http"
 	"time"
 )
 
 var StartTime time.Time
-
-const apiVersion = "v1"
 
 // GetStatus handles requests to the /status endpoint. It responds with the current
 // status of the API, including:
@@ -26,13 +25,13 @@ const apiVersion = "v1"
 func GetStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	countriesNowAPIStatus := getCountriesNowAPIStatus()
-	restCountriesAPIStatus := getRestCountriesAPIStatus()
+	countriesNowAPIStatus := getAPIStatus(COUNTRIES_NOW_API_URL)
+	restCountriesAPIStatus := getAPIStatus(REST_COUNTRIES_API_URL)
 
 	status := utils.APIStatus{
-		CountriesNowAPI:  restCountriesAPIStatus,
-		RestCountriesAPI: countriesNowAPIStatus,
-		Version:          apiVersion,
+		CountriesNowAPI:  countriesNowAPIStatus,
+		RestCountriesAPI: restCountriesAPIStatus,
+		Version:          API_VERSION,
 		Uptime:           math.Round(time.Since(StartTime).Seconds()),
 	}
 
@@ -49,14 +48,22 @@ func GetStatus(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// getCountriesNowAPIStatus returns the status of the CountriesNowAPI.
-func getCountriesNowAPIStatus() int {
-	// Placeholder for CountriesNowAPI status
-	return http.StatusOK
-}
+// getAPIStatus checks if the given API is up and returns its status
+func getAPIStatus(apiURL string) int {
+	// Send a GET request to the API
+	resp, err := http.Get(apiURL)
+	if err != nil {
+		log.Printf("Error contacting API: %v", err)
+		return http.StatusServiceUnavailable // Return 503 if there's an error
+	}
+	defer resp.Body.Close()
 
-// getRestCountriesAPIStatus returns the status of the RestCountriesAPI.
-func getRestCountriesAPIStatus() int {
-	// Placeholder for RestCountriesAPI status
-	return http.StatusOK
+	// Check if the status code indicates success (200 OK)
+	if resp.StatusCode == http.StatusOK {
+		return http.StatusOK // Return 200 if the API is up
+	}
+
+	// If not 200 OK, log and return the received status code
+	log.Printf("API responded with status: %v", resp.StatusCode)
+	return resp.StatusCode // Return whatever status code the API sent
 }
