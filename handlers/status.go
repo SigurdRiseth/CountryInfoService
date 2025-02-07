@@ -25,13 +25,13 @@ var StartTime time.Time
 func GetStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	countriesNowAPIStatus := getAPIStatus(COUNTRIES_NOW_API_URL)
-	restCountriesAPIStatus := getAPIStatus(REST_COUNTRIES_API_URL)
+	countriesNowAPIStatus := getAPIStatus(utils.COUNTRIES_NOW_API_URL)
+	restCountriesAPIStatus := getAPIStatus(utils.REST_COUNTRIES_API_URL)
 
 	status := utils.APIStatus{
 		CountriesNowAPI:  countriesNowAPIStatus,
 		RestCountriesAPI: restCountriesAPIStatus,
-		Version:          API_VERSION,
+		Version:          utils.API_VERSION,
 		Uptime:           math.Round(time.Since(StartTime).Seconds()),
 	}
 

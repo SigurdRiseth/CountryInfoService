@@ -19,7 +19,7 @@ func GetInfo(w http.ResponseWriter, r *http.Request) {
 	isoCode := strings.TrimPrefix(r.URL.Path, "/country/v1/info/")
 	cityLimitStr := r.URL.Query().Get("limit")
 	if cityLimitStr == "" {
-		cityLimitStr = "3" // Default to 3 cities if no limit provided
+		cityLimitStr = "3" // Default to 3 cities if no limit provided // TODO: Wrong with default value?
 	}
 
 	// Fetch country info and handle errors
@@ -46,7 +46,7 @@ func GetInfo(w http.ResponseWriter, r *http.Request) {
 
 // getCountryInfo fetches country data from an external API.
 func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
-	url := REST_COUNTRIES_API_URL + isoCode
+	url := utils.REST_COUNTRIES_API_URL + isoCode
 	log.Printf("Fetching data from API: %s for country code: %s with limit %s", url, isoCode, cityLimitStr)
 
 	// Make HTTP request to the external API
