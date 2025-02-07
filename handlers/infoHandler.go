@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // GetInfo handles the country info request and returns data in JSON format.
@@ -15,7 +16,7 @@ func GetInfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Extract query parameters and default values
-	isoCode := "no" // Defaulting to "no" for now // TODO: get country-code from query params
+	isoCode := strings.TrimPrefix(r.URL.Path, "/country/v1/info/")
 	cityLimitStr := r.URL.Query().Get("limit")
 	if cityLimitStr == "" {
 		cityLimitStr = "3" // Default to 3 cities if no limit provided
