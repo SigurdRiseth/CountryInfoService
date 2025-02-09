@@ -118,3 +118,9 @@ type APIResponse struct {
 		Regex  string `json:"regex"`
 	} `json:"postalCode"`
 }
+
+// ErrorResponse represents the JSON error message structure
+type ErrorResponse struct {
+	Error   int    `json:"error"`
+	Message string `json:"message"`
+}

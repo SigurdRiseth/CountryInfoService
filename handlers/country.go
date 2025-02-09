@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/SigurdRiseth/CountryInfoService/utils"
 	"log"
 	"net/http"
@@ -89,7 +91,7 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	}
 
 	// Fetch cities based on the country code and limit
-	cities, err := getCities(isoCode, cityLimitStr)
+	cities, err := getCities(country.Name.Common, cityLimitStr)
 	if err != nil {
 		log.Printf("Error fetching cities: %v", err)
 		return utils.CountryInfo{}, errors.New("error fetching cities")
@@ -99,8 +101,15 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	return info, nil
 }
 
+// APIResponse defines the expected structure of the API response.
+type APIResponse struct {
+	Error   bool     `json:"error"`
+	Message string   `json:"msg"`
+	Data    []string `json:"data"`
+}
+
 // getCities fetches the top cities for the given country, with an optional limit on the number of cities.
-func getCities(isoCode, limitStr string) ([]string, error) {
+func getCities(countryName, limitStr string) ([]string, error) { // TODO: Refactor this mess :)
 	// Default limit to 3 cities if not provided
 	limit := 3
 	if limitStr != "" {
@@ -112,11 +121,47 @@ func getCities(isoCode, limitStr string) ([]string, error) {
 		}
 	}
 
-	// Fetch cities (stubbed for now)
-	// TODO: Integrate with a real API for fetching cities
-	cities := []string{"Oslo", "Bergen", "Trondheim"}
-	if len(cities) > limit {
-		cities = cities[:limit] // Slice to limit the number of cities
+	// Construct the API URL
+	url := utils.COUNTRIES_NOW_API_URL + "countries/cities"
+	log.Println("Fetching data from API:", url)
+
+	// Create JSON payload
+	requestBody, err := json.Marshal(map[string]string{"country": countryName})
+	if err != nil {
+		log.Printf("Error encoding JSON: %v", err)
+		return nil, errors.New("failed to encode request payload")
 	}
-	return cities, nil
+
+	// Make HTTP request to the external API
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Printf("Error contacting API: %v", err)
+		return nil, errors.New("failed to reach Countries-now-API")
+	}
+	defer resp.Body.Close()
+
+	// Ensure the response is successful
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("Countries-now-API returned status code: %d", resp.StatusCode)
+		return nil, fmt.Errorf("Countries-now-API returned error status code: %d", resp.StatusCode)
+	}
+
+	// Decode JSON response
+	var apiResponse APIResponse
+	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
+		log.Printf("Error decoding JSON: %v", err)
+		return nil, errors.New("failed to decode Countries-now-API response")
+	}
+
+	// Handle API errors
+	if apiResponse.Error {
+		log.Printf("API error: %s", apiResponse.Message)
+		return nil, errors.New("Countries-now-API returned an error: " + apiResponse.Message)
+	}
+
+	// Extract and limit cities
+	if len(apiResponse.Data) > limit {
+		return apiResponse.Data[:limit], nil
+	}
+	return apiResponse.Data, nil
 }

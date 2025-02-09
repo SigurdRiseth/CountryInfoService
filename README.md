@@ -3,10 +3,11 @@
 **CountryInfoService** is a simple REST API that provides country-related information, including the status of external country APIs. The service returns details such as the uptime of the service, API status, and version.
 
 ## Features
-- Fetch the status of the **CountriesNow API** and **RestCountries API**.
-- Display the **service uptime** since the last restart.
-- Return the **API version**.
-- Fetch country information, including population and area.
+- **Country Information**: Get the name, capital, population, cities of a given country.
+  - Optional: Limit the amount of cities returned.
+- **Population Information**: Get the population history of a given country.
+   - Optional: Get the population history for a given time interval.
+- **Status Information**: Get the status of the service and external APIs.
 
 ## Requirements
 
@@ -49,10 +50,54 @@
 
 Returns the name, capital, population, and area of a country. The country name should be passed as a query parameter.
 
+Example: http://localhost:8080/country/v1/info/no?limit=3
+
+Response:
+```json
+{
+  "name": "Norway",
+  "continents": [
+    "Europe"
+  ],
+  "population": 5379475,
+  "languages": {
+    "nno": "Norwegian Nynorsk",
+    "nob": "Norwegian Bokmål",
+    "smi": "Sami"
+  },
+  "borders": [
+    "FIN",
+    "SWE",
+    "RUS"
+  ],
+  "flag": "🇳🇴",
+  "capital": "Oslo",
+  "cities": [
+    "Abelvaer",
+    "Adalsbruk",
+    "Adland"
+  ]
+}
+```
+
 ### GET /countryinfo/v1/population/
 
 Returns the population of a country. The country name should be passed as a query parameter.
 
+Example: http://localhost:8080/country/v1/population/no?limit=2002-2008
+
 ### GET /countryinfo/v1/status/
 
 Returns the uptime of the service, API version, and status of the external APIs.
+
+Example: http://localhost:8080/country/v1/status
+
+Response:
+```json
+{
+  "countriesnowapi": 404,
+  "restcountriesapi": 400,
+  "version": "1.0",
+  "uptime": 13
+}
+```

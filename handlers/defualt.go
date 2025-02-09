@@ -1,16 +1,24 @@
 package handler
 
 import (
-	"fmt"
+	"encoding/json"
+	"github.com/SigurdRiseth/CountryInfoService/utils"
 	"net/http"
 )
 
+// DefaultHandler handles unknown routes and returns a JSON response
 func DefaultHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusNotFound) // Set HTTP status code to 404
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNotFound)
 
-	_, err := fmt.Fprint(w, "<h1>You seem lost</h1><p>404 - Page Not Found</p>")
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	// Create error response
+	response := utils.ErrorResponse{
+		Error:   http.StatusNotFound,
+		Message: "You seem lost. The requested page was not found.",
+	}
+
+	// Encode response as JSON
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, `{"error": "Internal Server Error"}`, http.StatusInternalServerError)
 	}
 }
