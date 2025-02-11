@@ -11,7 +11,7 @@ import (
 
 var StartTime time.Time
 
-// GetStatus handles requests to the /status endpoint. It responds with the current
+// HandleStatus handles requests to the /status endpoint. It responds with the current
 // status of the API, including:
 // - HTTP status codes for each service (CountriesNowAPI and RestCountriesAPI)
 // - The current version of the API
@@ -22,30 +22,26 @@ var StartTime time.Time
 // the encoding or writing process, an HTTP 500 error is returned.
 //
 // It does not take any parameters directly and returns the status in JSON format.
-func GetStatus(w http.ResponseWriter, r *http.Request) {
+func HandleStatus(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
 	countriesNowAPIStatus := getAPIStatus(utils.COUNTRIES_NOW_API_URL)
 	restCountriesAPIStatus := getAPIStatus(utils.REST_COUNTRIES_API_URL)
 
-	status := utils.APIStatus{
-		CountriesNowAPI:  countriesNowAPIStatus,
-		RestCountriesAPI: restCountriesAPIStatus,
-		Version:          utils.API_VERSION,
-		Uptime:           math.Round(time.Since(StartTime).Seconds()),
-	}
+	status := utils.NewAPIStatus(countriesNowAPIStatus, restCountriesAPIStatus,
+		math.Round(time.Since(StartTime).Seconds()))
 
 	response, err := json.Marshal(status)
 	if err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-		return
+		return err
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(response); err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		return
+		return err
 	}
+	
+	return nil
 }
 
 // getAPIStatus checks if the given API is up and returns its status

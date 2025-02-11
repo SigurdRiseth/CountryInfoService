@@ -7,7 +7,7 @@ import (
 )
 
 // DefaultHandler handles unknown routes and returns a JSON response
-func DefaultHandler(w http.ResponseWriter, r *http.Request) {
+func DefaultHandler(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNotFound)
 
@@ -19,6 +19,7 @@ func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Encode response as JSON
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, `{"error": "Internal Server Error"}`, http.StatusInternalServerError)
+		return err
 	}
+	return nil
 }

@@ -32,6 +32,15 @@ type APIStatus struct {
 	Uptime           float64 `json:"uptime"`
 }
 
+func NewAPIStatus(CountriesNowAPI, RestCountriesAPI int, uptime float64) *APIStatus {
+	return &APIStatus{
+		CountriesNowAPI:  CountriesNowAPI,
+		RestCountriesAPI: RestCountriesAPI,
+		Version:          API_VERSION,
+		Uptime:           uptime,
+	}
+}
+
 type CountryInfo struct {
 	Name       string            `json:"name"`
 	Continents []string          `json:"continents"`
@@ -123,4 +132,12 @@ type APIResponse struct {
 type ErrorResponse struct {
 	Error   int    `json:"error"`
 	Message string `json:"message"`
+}
+
+type PopulationInfo struct {
+	Mean   int `json:"mean"`
+	Values []struct {
+		Year  int `json:"year"`
+		Value int `json:"value"`
+	} `json:"values"`
 }
