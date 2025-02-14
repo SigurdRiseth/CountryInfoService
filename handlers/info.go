@@ -8,6 +8,7 @@ import (
 	"github.com/SigurdRiseth/CountryInfoService/utils"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // HandleInfo handles the country info request and returns data in JSON format.
@@ -25,8 +26,14 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	apiResponse := utils.APIResponse{
+		Error:   false,
+		Message: "Success",
+		Data:    info,
+	}
+
 	// Marshal the response into JSON
-	response, err := json.Marshal(info)
+	response, err := json.Marshal(apiResponse)
 	if err != nil {
 		return err
 	}
@@ -67,7 +74,7 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	}
 
 	// Decode the JSON response into the appropriate struct
-	var apiResponse []utils.APIResponse
+	var apiResponse []utils.CountryInfoAPIResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 		log.Printf("Error decoding JSON: %v", err)
 		return utils.CountryInfo{}, errors.New("error decoding JSON")
@@ -87,38 +94,46 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 		Languages:  country.Languages,
 		Borders:    country.Borders,
 		Flag:       country.Flag,
-		Capital:    country.Capital[0], // Assuming there's always at least one capital
-		Cities:     nil,                // Placeholder for cities
+		Capital:    country.Capital[0],
+		Cities:     nil,
 	}
 
 	// Fetch cities based on the country code and limit
-	APIResponse, err := fetchCitiesFromAPI(isoCode)
+	aPIResponse, err := fetchCitiesFromAPI(isoCode)
 	if err != nil {
 		return utils.CountryInfo{}, errors.New("error fetching cities")
 	}
-	cities := limitCities(APIResponse.Data, 10)
+	cities := limitCities(aPIResponse.Data, cityLimitStr)
 	info.Cities = cities
 
 	return info, nil
 }
 
 // limitCities ensures the returned list of cities does not exceed the given limit.
-func limitCities(cities []string, limit int) []string {
+func limitCities(cities []string, limitString string) []string {
+	// Convert limitString to an integer, fallback to defaultLimit on error
+	limit, err := strconv.Atoi(limitString)
+	if err != nil || limit <= 0 {
+		log.Printf("Invalid limit value: %s, defaulting to %d", limitString, utils.DEFAULT_CITY_LIMIT)
+		limit = utils.DEFAULT_CITY_LIMIT
+	}
+
+	// Ensure limit does not exceed the length of cities
 	if len(cities) > limit {
 		return cities[:limit]
 	}
 	return cities
 }
 
-// APIResponse defines the expected structure of the API response.
-type APIResponse struct {
-	Error   bool     `json:"error"`
-	Message string   `json:"msg"`
-	Data    []string `json:"data"`
-}
-
-// fetchCitiesFromAPI sends a request to the Countries-Now API to fetch city data.
-func fetchCitiesFromAPI(isoCode string) (*APIResponse, error) {
+// fetchCitiesFromAPI fetches city data from the Countries-Now API based on the provided ISO country code.
+//
+// Parameters:
+// - isoCode: A string representing the ISO 3166-1 alpha-2 country code.
+//
+// Returns:
+// - *CountryInfoAPIResponse: A pointer to the CountryInfoAPIResponse struct containing the city data.
+// - error: An error if the request fails or the API returns an error.
+func fetchCitiesFromAPI(isoCode string) (*utils.APIResponseString, error) {
 	url := utils.COUNTRIES_NOW_API_URL + "countries/cities"
 	log.Println("Fetching city data from API:", url)
 
@@ -137,7 +152,7 @@ func fetchCitiesFromAPI(isoCode string) (*APIResponse, error) {
 		return nil, fmt.Errorf("Countries-Now API returned error status code: %d", resp.StatusCode)
 	}
 
-	var apiResponse APIResponse
+	var apiResponse utils.APIResponseString
 	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 		return nil, errors.New("failed to decode Countries-Now API response")
 	}

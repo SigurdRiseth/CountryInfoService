@@ -53,7 +53,7 @@ type CountryInfo struct {
 }
 
 // CountryInfo struct for displaying the country information
-type APIResponse struct {
+type CountryInfoAPIResponse struct {
 	Name struct {
 		Common     string `json:"common"`
 		Official   string `json:"official"`
@@ -135,9 +135,23 @@ type ErrorResponse struct {
 }
 
 type PopulationInfo struct {
-	Mean   int `json:"mean"`
-	Values []struct {
-		Year  int `json:"year"`
-		Value int `json:"value"`
-	} `json:"values"`
+	Mean   int         `json:"mean"`
+	Values []YearValue `json:"values"`
+}
+
+type YearValue struct {
+	Year  int `json:"year"`
+	Value int `json:"value"`
+}
+
+type APIResponse struct {
+	Error   bool        `json:"error"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"` // Allows any type of data
+}
+
+type APIResponseString struct {
+	Error   bool     `json:"error"`
+	Message string   `json:"message"`
+	Data    []string `json:"data"` // Allows any type of data
 }

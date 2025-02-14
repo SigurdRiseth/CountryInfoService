@@ -55,28 +55,32 @@ Example: http://localhost:8080/country/v1/info/no?limit=3
 Response:
 ```json
 {
-  "name": "Norway",
-  "continents": [
-    "Europe"
-  ],
-  "population": 5379475,
-  "languages": {
-    "nno": "Norwegian Nynorsk",
-    "nob": "Norwegian Bokmål",
-    "smi": "Sami"
-  },
-  "borders": [
-    "FIN",
-    "SWE",
-    "RUS"
-  ],
-  "flag": "🇳🇴",
-  "capital": "Oslo",
-  "cities": [
-    "Abelvaer",
-    "Adalsbruk",
-    "Adland"
-  ]
+  "error": false,
+  "msg": "Country information retrieved successfully",
+  "data": {
+    "name": "Norway",
+    "continents": [
+      "Europe"
+    ],
+    "population": 5379475,
+    "languages": {
+      "nno": "Norwegian Nynorsk",
+      "nob": "Norwegian Bokmål",
+      "smi": "Sami"
+    },
+    "borders": [
+      "FIN",
+      "SWE",
+      "RUS"
+    ],
+    "flag": "🇳🇴",
+    "capital": "Oslo",
+    "cities": [
+      "Abelvaer",
+      "Adalsbruk",
+      "Adland"
+    ]
+  }
 }
 ```
 
@@ -85,6 +89,25 @@ Response:
 Returns the population of a country. The country name should be passed as a query parameter.
 
 Example: http://localhost:8080/country/v1/population/no?limit=2002-2008
+
+Response:
+```json
+{
+  "error": false,
+  "msg": "Population data retrieved successfully",
+  "data": {
+    "mean": 5044396,
+    "values": [
+      {"year": 2010, "value": 4889252},
+      {"year": 2011, "value": 4953088},
+      {"year": 2012, "value": 5018573},
+      {"year": 2013, "value": 5079623},
+      {"year": 2014, "value": 5137232},
+      {"year": 2015, "value": 5188607}
+    ]
+  }
+}
+```
 
 ### GET /countryinfo/v1/status/
 
@@ -95,9 +118,23 @@ Example: http://localhost:8080/country/v1/status
 Response:
 ```json
 {
-  "countriesnowapi": 404,
-  "restcountriesapi": 400,
-  "version": "1.0",
-  "uptime": 13
+  "error": false,
+  "msg": "Service status retrieved successfully",
+  "data": {
+    "uptime": "4521 seconds",
+    "version": "1.0.0",
+    "externalAPIs": [
+      {
+        "name": "Countries-Now-API",
+        "status": "Online",
+        "lastChecked": "2025-02-09T14:30:00Z"
+      },
+      {
+        "name": "Another-External-API",
+        "status": "Offline",
+        "lastChecked": "2025-02-09T14:25:00Z"
+      }
+    ]
+  }
 }
 ```
