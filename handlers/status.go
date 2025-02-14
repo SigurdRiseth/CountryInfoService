@@ -31,7 +31,13 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) error {
 	status := utils.NewAPIStatus(countriesNowAPIStatus, restCountriesAPIStatus,
 		math.Round(time.Since(StartTime).Seconds()))
 
-	response, err := json.Marshal(status)
+	resp := utils.APIResponse{
+		Error:   false,
+		Message: "Status retrieved successfully",
+		Data:    status,
+	}
+
+	response, err := json.Marshal(resp)
 	if err != nil {
 		return err
 	}
@@ -40,7 +46,7 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) error {
 	if _, err := w.Write(response); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

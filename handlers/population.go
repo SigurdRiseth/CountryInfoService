@@ -90,11 +90,18 @@ func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
 		population.Mean = sum / len(filteredValues)
 	}
 
-	// Use the PopulationInfo struct as needed
-	log.Printf("Population Info: %+v", population)
+	response := utils.APIResponse{
+		Error:   false,
+		Message: "Population data retrieved successfully",
+		Data:    population,
+	}
 
 	// Send the response
-	json.NewEncoder(w).Encode(population)
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		log.Printf("Error encoding JSON: %v", err)
+		return err
+	}
 
 	return nil
 }
