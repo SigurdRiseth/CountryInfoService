@@ -56,7 +56,7 @@ Response:
 ```json
 {
   "error": false,
-  "msg": "Country information retrieved successfully",
+  "message": "Country information retrieved successfully",
   "data": {
     "name": "Norway",
     "continents": [
@@ -88,22 +88,28 @@ Response:
 
 Returns the population of a country. The country name should be passed as a query parameter.
 
-Example: http://localhost:8080/country/v1/population/no?limit=2002-2008
+Example: http://localhost:8080/country/v1/population/no?limit=2002-2004
 
 Response:
 ```json
 {
   "error": false,
-  "msg": "Population data retrieved successfully",
+  "message": "Population data retrieved successfully",
   "data": {
-    "mean": 5044396,
+    "mean": 4564974,
     "values": [
-      {"year": 2010, "value": 4889252},
-      {"year": 2011, "value": 4953088},
-      {"year": 2012, "value": 5018573},
-      {"year": 2013, "value": 5079623},
-      {"year": 2014, "value": 5137232},
-      {"year": 2015, "value": 5188607}
+      {
+        "year": 2002,
+        "value": 4538159
+      },
+      {
+        "year": 2003,
+        "value": 4564855
+      },
+      {
+        "year": 2004,
+        "value": 4591910
+      }
     ]
   }
 }
@@ -119,22 +125,12 @@ Response:
 ```json
 {
   "error": false,
-  "msg": "Service status retrieved successfully",
+  "message": "Service status retrieved successfully",
   "data": {
-    "uptime": "4521 seconds",
-    "version": "1.0.0",
-    "externalAPIs": [
-      {
-        "name": "Countries-Now-API",
-        "status": "Online",
-        "lastChecked": "2025-02-09T14:30:00Z"
-      },
-      {
-        "name": "Another-External-API",
-        "status": "Offline",
-        "lastChecked": "2025-02-09T14:25:00Z"
-      }
-    ]
+    "countriesnowapi": 200,
+    "restcountriesapi": 200,
+    "version": "1.0",
+    "uptime": 542
   }
 }
 ```

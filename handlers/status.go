@@ -33,7 +33,7 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) error {
 
 	resp := utils.APIResponse{
 		Error:   false,
-		Message: "Status retrieved successfully",
+		Message: "Service status retrieved successfully",
 		Data:    status,
 	}
 
