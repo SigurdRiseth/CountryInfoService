@@ -127,10 +127,10 @@ Response:
   "error": false,
   "message": "Service status retrieved successfully",
   "data": {
-    "countriesnowapi": 200,
-    "restcountriesapi": 200,
+    "countriesnowapi": "Online",
+    "restcountriesapi": "Online",
     "version": "1.0",
-    "uptime": 542
+    "uptime": "11 seconds"
   }
 }
 ```
