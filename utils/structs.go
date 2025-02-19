@@ -1,5 +1,7 @@
 package utils
 
+import "fmt"
+
 // Country struct for displaying the country information
 type Country struct {
 	Name       string            `json:"name"`
@@ -26,18 +28,27 @@ type yearValue struct {
 
 // APIStatus struct for displaying the status of the APIs
 type APIStatus struct {
-	CountriesNowAPI  int     `json:"countriesnowapi"`
-	RestCountriesAPI int     `json:"restcountriesapi"`
-	Version          string  `json:"version"`
-	Uptime           float64 `json:"uptime"`
+	CountriesNowAPI  string `json:"countriesnowapi"`
+	RestCountriesAPI string `json:"restcountriesapi"`
+	Version          string `json:"version"`
+	Uptime           string `json:"uptime"`
 }
 
-func NewAPIStatus(CountriesNowAPI, RestCountriesAPI int, uptime float64) *APIStatus {
+// NewAPIStatus creates a new APIStatus instance with the provided API statuses and uptime.
+//
+// Parameters:
+// - CountriesNowAPI: The status of the CountriesNow API.
+// - RestCountriesAPI: The status of the RestCountries API.
+// - uptime: The uptime of the API in seconds.
+//
+// Returns:
+// - A pointer to an APIStatus struct containing the provided information.
+func NewAPIStatus(CountriesNowAPI, RestCountriesAPI string, uptime float64) *APIStatus {
 	return &APIStatus{
 		CountriesNowAPI:  CountriesNowAPI,
 		RestCountriesAPI: RestCountriesAPI,
 		Version:          API_VERSION,
-		Uptime:           uptime,
+		Uptime:           fmt.Sprintf("%.0f seconds", uptime),
 	}
 }
 

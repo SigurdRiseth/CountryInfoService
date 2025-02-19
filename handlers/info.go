@@ -28,7 +28,7 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 
 	apiResponse := utils.APIResponse{
 		Error:   false,
-		Message: "Success",
+		Message: "Country information retrieved successfully",
 		Data:    info,
 	}
 

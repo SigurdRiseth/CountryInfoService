@@ -13,9 +13,6 @@ import (
 func StartServer() {
 	handler.StartTime = time.Now() // Initialize start time
 
-	// Load environment variables
-	config.LoadEnvVariables()
-
 	// Get the port from environment variables, default to 8080
 	port := config.GetPort()
 
