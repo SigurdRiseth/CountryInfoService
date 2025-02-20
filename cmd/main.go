@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/SigurdRiseth/CountryInfoService/server"
+	"log"
 )
 
 func main() {

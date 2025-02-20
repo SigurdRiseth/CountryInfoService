@@ -35,7 +35,7 @@ func setupRouter() *http.ServeMux {
 	router.HandleFunc(utils.InfoPath, makeHTTPHandleFunc(handler.HandleInfo))
 	router.HandleFunc(utils.PopulationPath, makeHTTPHandleFunc(handler.HandlePopulation))
 	router.HandleFunc(utils.StatusPath, makeHTTPHandleFunc(handler.HandleStatus))
-	router.HandleFunc("/", makeHTTPHandleFunc(handler.DefaultHandler))
+	router.HandleFunc("/", handler.DefaultHandler)
 
 	return router
 }

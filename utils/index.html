@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Info API Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            line-height: 1.6;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<h1>Country Info API Guide</h1>
+<p>This API provides information about countries, including general data, population history, and service status.</p>
+
+<h2>Endpoints</h2>
+
+<h3>1. Country Information</h3>
+<p>Retrieves general information about a country, including name, capital, languages, borders, flag, population, and cities.</p>
+<p><strong>Request:</strong></p>
+<p><code>GET /countryinfo/v1/info/{two_letter_country_code}{?limit=10}</code></p>
+<p><strong>Parameters:</strong></p>
+<ul>
+    <li><code>two_letter_country_code</code>: The 2-letter ISO 3166-1 country code (e.g., <code>no</code> for Norway).</li>
+    <li><code>limit</code> (optional): Limits the number of cities returned, sorted in ascending alphabetical order.</li>
+</ul>
+<p><strong>Example:</strong> <a href="/countryinfo/v1/info/no">/countryinfo/v1/info/no</a></p>
+<p><strong>Example with limit:</strong> <a href="/countryinfo/v1/info/no?limit=10">/countryinfo/v1/info/no?limit=10</a></p>
+
+<h3>2. Population History</h3>
+<p>Retrieves population data for a country, with an optional year range filter.</p>
+<p><strong>Request:</strong></p>
+<p><code>GET /countryinfo/v1/population/{two_letter_country_code}{?limit={startYear-endYear}}</code></p>
+<p><strong>Parameters:</strong></p>
+<ul>
+    <li><code>two_letter_country_code</code>: The 2-letter ISO 3166-1 country code.</li>
+    <li><code>limit</code> (optional): Specifies a range of years (e.g., <code>2000-2020</code> to retrieve population data between those years).</li>
+</ul>
+<p><strong>Example:</strong> <a href="/countryinfo/v1/population/no">/countryinfo/v1/population/no</a></p>
+<p><strong>Example with year range:</strong> <a href="/countryinfo/v1/population/no?limit=2000-2020">/countryinfo/v1/population/no?limit=2000-2020</a></p>
+
+<h3>3. Service Status</h3>
+<p>Checks the status of the API.</p>
+<p><strong>Request:</strong></p>
+<p><code>GET /countryinfo/v1/status</code></p>
+<p><strong>Example:</strong> <a href="/countryinfo/v1/status">/countryinfo/v1/status</a></p>
+
+<hr>
+<p>For more information, visit the <a href="https://github.com/SigurdRiseth/CountryInfoService/blob/main/README.md">API documentation</a>.</p>
+</body>
+</html>
