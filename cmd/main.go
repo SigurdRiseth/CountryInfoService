@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/SigurdRiseth/CountryInfoService/internal/server"
+	"github.com/SigurdRiseth/CountryInfoService/server"
 	"log"
 )
 

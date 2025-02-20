@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	utils2 "github.com/SigurdRiseth/CountryInfoService/internal/utils"
+	"github.com/SigurdRiseth/CountryInfoService/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -50,7 +50,7 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	apiResponse := utils2.APIResponse{
+	apiResponse := utils.APIResponse{
 		Error:   false,
 		Message: "Country information retrieved successfully",
 		Data:    info,
@@ -72,34 +72,34 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 }
 
 // getCountryInfo fetches country data from an external API.
-func getCountryInfo(isoCode, cityLimitStr string) (utils2.CountryInfo, error) {
-	url := utils2.RestCountriesApiUrl + isoCode + utils2.RestCountriesFilter
+func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
+	url := utils.RestCountriesApiUrl + isoCode + utils.RestCountriesFilter
 	log.Printf("Fetching data from API: %s for country code: %s with limit %s", url, isoCode, cityLimitStr)
 
 	// Make HTTP request to the external API
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Printf("Error contacting API: %v", err)
-		return utils2.CountryInfo{}, errors.New("error contacting API")
+		return utils.CountryInfo{}, errors.New("error contacting API")
 	}
 	defer resp.Body.Close()
 
 	// Ensure the response is successful
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("API returned status code: %d", resp.StatusCode)
-		return utils2.CountryInfo{}, errors.New("API returned error status code")
+		return utils.CountryInfo{}, errors.New("API returned error status code")
 	}
 
 	// Decode the JSON response into the appropriate struct
 	var apiResponse Country
 	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 		log.Printf("Error decoding JSON: %v", err)
-		return utils2.CountryInfo{}, errors.New("error decoding JSON")
+		return utils.CountryInfo{}, errors.New("error decoding JSON")
 	}
 
 	// Extract country data from the response
 	country := apiResponse
-	info := utils2.CountryInfo{
+	info := utils.CountryInfo{
 		Name:       country.Name.Common,
 		Continents: country.Continents,
 		Population: country.Population,
@@ -113,7 +113,7 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils2.CountryInfo, error) {
 	// Fetch cities based on the country code and limit
 	citiesFromAPI, err := fetchCitiesFromAPI(isoCode)
 	if err != nil {
-		return utils2.CountryInfo{}, errors.New("error fetching cities")
+		return utils.CountryInfo{}, errors.New("error fetching cities")
 	}
 	cities := limitCities(citiesFromAPI.Data, cityLimitStr)
 	info.Cities = cities
@@ -133,8 +133,8 @@ func limitCities(cities []string, limitString string) []string {
 	// Convert limitString to an integer, fallback to defaultLimit on error
 	limit, err := strconv.Atoi(limitString)
 	if err != nil || limit <= 0 {
-		log.Printf("Invalid limit value: %s, defaulting to %d", limitString, utils2.DefaultCityLimit)
-		limit = utils2.DefaultCityLimit
+		log.Printf("Invalid limit value: %s, defaulting to %d", limitString, utils.DefaultCityLimit)
+		limit = utils.DefaultCityLimit
 	}
 
 	// Ensure limit does not exceed the length of cities
@@ -152,8 +152,8 @@ func limitCities(cities []string, limitString string) []string {
 // Returns:
 // - *CountryInfoAPIResponse: A pointer to the CountryInfoAPIResponse struct containing the city data.
 // - error: An error if the request fails or the API returns an error.
-func fetchCitiesFromAPI(isoCode string) (*utils2.APIResponseString, error) {
-	url := utils2.CountriesNowApiUrl + "countries/cities"
+func fetchCitiesFromAPI(isoCode string) (*utils.APIResponseString, error) {
+	url := utils.CountriesNowApiUrl + "countries/cities"
 	log.Println("Fetching city data from API:", url)
 
 	requestBody, err := json.Marshal(map[string]string{"iso2": isoCode})
@@ -171,7 +171,7 @@ func fetchCitiesFromAPI(isoCode string) (*utils2.APIResponseString, error) {
 		return nil, fmt.Errorf("Countries-Now API returned error status code: %d", resp.StatusCode)
 	}
 
-	var apiResponse utils2.APIResponseString
+	var apiResponse utils.APIResponseString
 	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 		return nil, errors.New("failed to decode Countries-Now API response")
 	}
