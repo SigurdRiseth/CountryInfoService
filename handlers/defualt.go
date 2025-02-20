@@ -10,5 +10,5 @@ func DefaultHandler(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-	http.ServeFile(writer, r, "../utils/index.html")
+	http.ServeFile(writer, r, "../static/index.html")
 }
