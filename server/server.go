@@ -21,7 +21,7 @@ func StartServer() {
 
 	// Start the server
 	log.Println("Server started on port " + port)
-	log.Fatal(http.ListenAndServe(":"+port, router)) // TODO: Gracefully shutdown server?
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
 // setupRouter initializes the HTTP request multiplexer (router) and defines the endpoints.
@@ -32,9 +32,9 @@ func setupRouter() *http.ServeMux {
 	router := http.NewServeMux()
 
 	// Define the endpoints
-	router.HandleFunc(utils.InfoPath, makeHTTPHandleFunc(handler.HandleInfo))
-	router.HandleFunc(utils.PopulationPath, makeHTTPHandleFunc(handler.HandlePopulation))
-	router.HandleFunc(utils.StatusPath, makeHTTPHandleFunc(handler.HandleStatus))
+	router.HandleFunc(utils.GetInfoPath(""), makeHTTPHandleFunc(handler.HandleInfo))
+	router.HandleFunc(utils.GetPopulationPath(""), makeHTTPHandleFunc(handler.HandlePopulation))
+	router.HandleFunc(utils.GetStatusPath(), makeHTTPHandleFunc(handler.HandleStatus))
 	router.HandleFunc("/", handler.DefaultHandler)
 
 	return router
