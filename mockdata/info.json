@@ -1,0 +1,38 @@
+{
+  "name": {
+    "common": "Norway",
+    "official": "Kingdom of Norway",
+    "nativeName": {
+      "nno": {
+        "official": "Kongeriket Noreg",
+        "common": "Noreg"
+      },
+      "nob": {
+        "official": "Kongeriket Norge",
+        "common": "Norge"
+      },
+      "smi": {
+        "official": "Norgga gonagasriika",
+        "common": "Norgga"
+      }
+    }
+  },
+  "capital": [
+    "Oslo"
+  ],
+  "languages": {
+    "nno": "Norwegian Nynorsk",
+    "nob": "Norwegian Bokmål",
+    "smi": "Sami"
+  },
+  "borders": [
+    "FIN",
+    "SWE",
+    "RUS"
+  ],
+  "flag": "🇳🇴",
+  "population": 5379475,
+  "continents": [
+    "Europe"
+  ]
+}

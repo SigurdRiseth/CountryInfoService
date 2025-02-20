@@ -28,7 +28,7 @@ type populationAPIResponse struct {
 }
 
 func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
-	url := utils.COUNTRIES_NOW_API_URL + "countries/population"
+	url := utils.CountriesNowApiUrl + "countries/population"
 
 	isoCode := r.PathValue("two_letter_country_code")
 	limit := r.URL.Query().Get("limit")
@@ -107,7 +107,7 @@ func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
 }
 
 func getIso3(isoCode string) (string, error) {
-	isoCodeResponse, err := http.Get(utils.REST_COUNTRIES_API_URL + isoCode + "?fields=cca3")
+	isoCodeResponse, err := http.Get(utils.RestCountriesApiUrl + isoCode + "?fields=cca3")
 	if err != nil {
 		log.Printf("Error contacting API: %v", err)
 		return "", errors.New("error contacting API")

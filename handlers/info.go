@@ -11,6 +11,30 @@ import (
 	"strconv"
 )
 
+// Country represents the structure of the API response
+type Country struct {
+	Name       Name              `json:"name"`
+	Capital    []string          `json:"capital"`
+	Languages  map[string]string `json:"languages"`
+	Borders    []string          `json:"borders"`
+	Flag       string            `json:"flag"`
+	Population int               `json:"population"`
+	Continents []string          `json:"continents"`
+}
+
+// Name represents the naming details of the country
+type Name struct {
+	Common     string                `json:"common"`
+	Official   string                `json:"official"`
+	NativeName map[string]NativeName `json:"nativeName"`
+}
+
+// NativeName represents the native language details
+type NativeName struct {
+	Official string `json:"official"`
+	Common   string `json:"common"`
+}
+
 // HandleInfo handles the country info request and returns data in JSON format.
 func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 	// Set response content type to JSON
@@ -49,7 +73,7 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 
 // getCountryInfo fetches country data from an external API.
 func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
-	url := utils.REST_COUNTRIES_API_URL + isoCode
+	url := utils.RestCountriesApiUrl + isoCode + utils.RestCountriesFilter
 	log.Printf("Fetching data from API: %s for country code: %s with limit %s", url, isoCode, cityLimitStr)
 
 	// Make HTTP request to the external API
@@ -59,13 +83,6 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 		return utils.CountryInfo{}, errors.New("error contacting API")
 	}
 	defer resp.Body.Close()
-	/**
-	Filter
-	GET
-	Get only specified countries information
-	https://countriesnow.space/api/v0.1/countries/info?returns=currency,flag,unicodeFlag,dialCode
-	Get only specified countries information
-	*/
 
 	// Ensure the response is successful
 	if resp.StatusCode != http.StatusOK {
@@ -74,19 +91,14 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	}
 
 	// Decode the JSON response into the appropriate struct
-	var apiResponse []utils.CountryInfoAPIResponse
+	var apiResponse Country
 	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
 		log.Printf("Error decoding JSON: %v", err)
 		return utils.CountryInfo{}, errors.New("error decoding JSON")
 	}
 
-	if len(apiResponse) == 0 {
-		log.Println("No data found for country")
-		return utils.CountryInfo{}, errors.New("no data found for country")
-	}
-
 	// Extract country data from the response
-	country := apiResponse[0]
+	country := apiResponse
 	info := utils.CountryInfo{
 		Name:       country.Name.Common,
 		Continents: country.Continents,
@@ -99,23 +111,30 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	}
 
 	// Fetch cities based on the country code and limit
-	aPIResponse, err := fetchCitiesFromAPI(isoCode)
+	citiesFromAPI, err := fetchCitiesFromAPI(isoCode)
 	if err != nil {
 		return utils.CountryInfo{}, errors.New("error fetching cities")
 	}
-	cities := limitCities(aPIResponse.Data, cityLimitStr)
+	cities := limitCities(citiesFromAPI.Data, cityLimitStr)
 	info.Cities = cities
 
 	return info, nil
 }
 
 // limitCities ensures the returned list of cities does not exceed the given limit.
+//
+// Parameters:
+// - cities: A slice of strings representing the list of cities.
+// - limitString: A string representing the maximum number of cities to return.
+//
+// Returns:
+// - A slice of strings containing the limited list of cities.
 func limitCities(cities []string, limitString string) []string {
 	// Convert limitString to an integer, fallback to defaultLimit on error
 	limit, err := strconv.Atoi(limitString)
 	if err != nil || limit <= 0 {
-		log.Printf("Invalid limit value: %s, defaulting to %d", limitString, utils.DEFAULT_CITY_LIMIT)
-		limit = utils.DEFAULT_CITY_LIMIT
+		log.Printf("Invalid limit value: %s, defaulting to %d", limitString, utils.DefaultCityLimit)
+		limit = utils.DefaultCityLimit
 	}
 
 	// Ensure limit does not exceed the length of cities
@@ -134,7 +153,7 @@ func limitCities(cities []string, limitString string) []string {
 // - *CountryInfoAPIResponse: A pointer to the CountryInfoAPIResponse struct containing the city data.
 // - error: An error if the request fails or the API returns an error.
 func fetchCitiesFromAPI(isoCode string) (*utils.APIResponseString, error) {
-	url := utils.COUNTRIES_NOW_API_URL + "countries/cities"
+	url := utils.CountriesNowApiUrl + "countries/cities"
 	log.Println("Fetching city data from API:", url)
 
 	requestBody, err := json.Marshal(map[string]string{"iso2": isoCode})

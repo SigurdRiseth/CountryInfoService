@@ -30,8 +30,8 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) error {
 	log.Println("Retrieving service status")
 	w.Header().Set("Content-Type", "application/json")
 
-	countriesNowAPIStatus := getAPIStatus(utils.COUNTRIES_NOW_API_URL)
-	restCountriesAPIStatus := getAPIStatus(utils.REST_COUNTRIES_API_URL)
+	countriesNowAPIStatus := getAPIStatus(utils.CountriesNowApiUrl)
+	restCountriesAPIStatus := getAPIStatus(utils.RestCountriesApiUrl)
 
 	status := utils.NewAPIStatus(
 		countriesNowAPIStatus,

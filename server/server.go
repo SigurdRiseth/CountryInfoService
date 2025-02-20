@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// StartServer initializes and starts the HTTP server
+// StartServer initializes and starts the HTTP server.
 func StartServer() {
 	handler.StartTime = time.Now() // Initialize start time
 
@@ -24,24 +24,23 @@ func StartServer() {
 	log.Fatal(http.ListenAndServe(":"+port, router)) // TODO: Gracefully shutdown server?
 }
 
-// setupRouter sets up the HTTP routes and handlers
+// setupRouter initializes the HTTP request multiplexer (router) and defines the endpoints.
+//
+// Returns:
+// - *http.ServeMux: A pointer to the initialized HTTP request multiplexer.
 func setupRouter() *http.ServeMux {
 	router := http.NewServeMux()
 
 	// Define the endpoints
-	router.HandleFunc(utils.INFO_PATH, makeHTTPHandleFunc(handler.HandleInfo))
-	router.HandleFunc(utils.POPULATION_PATH, makeHTTPHandleFunc(handler.HandlePopulation))
-	router.HandleFunc(utils.STATUS_PATH, makeHTTPHandleFunc(handler.HandleStatus))
+	router.HandleFunc(utils.InfoPath, makeHTTPHandleFunc(handler.HandleInfo))
+	router.HandleFunc(utils.PopulationPath, makeHTTPHandleFunc(handler.HandlePopulation))
+	router.HandleFunc(utils.StatusPath, makeHTTPHandleFunc(handler.HandleStatus))
 	router.HandleFunc("/", makeHTTPHandleFunc(handler.DefaultHandler))
 
 	return router
 }
 
 type apiFunc func(w http.ResponseWriter, r *http.Request) error
-
-type apiError struct {
-	Error string `json:"message"`
-}
 
 // makeHTTPHandleFunc is a helper function that wraps an apiFunc with error handling.
 // It returns an http.HandlerFunc that logs the error and sends an HTTP 500 status code

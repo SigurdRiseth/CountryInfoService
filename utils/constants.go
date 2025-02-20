@@ -2,11 +2,12 @@ package utils
 
 // Define the paths for the different endpoints
 const (
-	INFO_PATH              = "/country/v1/info/{two_letter_country_code}"
-	POPULATION_PATH        = "/country/v1/population/{two_letter_country_code}"
-	STATUS_PATH            = "/country/v1/status"
-	API_VERSION            = "1.0"
-	COUNTRIES_NOW_API_URL  = "http://129.241.150.113:3500/api/v0.1/"
-	REST_COUNTRIES_API_URL = "http://129.241.150.113:8080/v3.1/alpha/"
-	DEFAULT_CITY_LIMIT     = 3
+	InfoPath            = "/country/v1/info/{two_letter_country_code}"
+	PopulationPath      = "/country/v1/population/{two_letter_country_code}"
+	StatusPath          = "/country/v1/status"
+	ApiVersion          = "1.0"
+	CountriesNowApiUrl  = "http://129.241.150.113:3500/api/v0.1/"
+	RestCountriesApiUrl = "http://129.241.150.113:8080/v3.1/alpha/"
+	DefaultCityLimit    = 3
+	RestCountriesFilter = "?fields=name,continents,population,languages,borders,flag,capital"
 )
