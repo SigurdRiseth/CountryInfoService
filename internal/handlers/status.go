@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/SigurdRiseth/CountryInfoService/utils"
+	utils2 "github.com/SigurdRiseth/CountryInfoService/internal/utils"
 	"log"
 	"net/http"
 	"time"
@@ -30,16 +30,16 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) error {
 	log.Println("Retrieving service status")
 	w.Header().Set("Content-Type", "application/json")
 
-	countriesNowAPIStatus := getAPIStatus(utils.CountriesNowApiUrl)
-	restCountriesAPIStatus := getAPIStatus(utils.RestCountriesApiUrl)
+	countriesNowAPIStatus := getAPIStatus(utils2.CountriesNowApiUrl)
+	restCountriesAPIStatus := getAPIStatus(utils2.RestCountriesApiUrl)
 
-	status := utils.NewAPIStatus(
+	status := utils2.NewAPIStatus(
 		countriesNowAPIStatus,
 		restCountriesAPIStatus,
 		time.Since(StartTime).Seconds(),
 	)
 
-	resp := utils.APIResponse{
+	resp := utils2.APIResponse{
 		Error:   false,
 		Message: "Service status retrieved successfully",
 		Data:    status,

@@ -1,9 +1,9 @@
 package server
 
 import (
-	"github.com/SigurdRiseth/CountryInfoService/config"
-	"github.com/SigurdRiseth/CountryInfoService/handlers"
-	"github.com/SigurdRiseth/CountryInfoService/utils"
+	"github.com/SigurdRiseth/CountryInfoService/internal/config"
+	"github.com/SigurdRiseth/CountryInfoService/internal/handlers"
+	"github.com/SigurdRiseth/CountryInfoService/internal/utils"
 	"log"
 	"net/http"
 	"time"

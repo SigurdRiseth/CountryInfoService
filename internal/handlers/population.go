@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/SigurdRiseth/CountryInfoService/utils"
+	utils2 "github.com/SigurdRiseth/CountryInfoService/internal/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -20,15 +20,15 @@ type populationAPIResponse struct {
 	Error bool   `json:"error"`
 	Msg   string `json:"msg"`
 	Data  struct {
-		Country          string            `json:"country"`
-		Code             string            `json:"code"`
-		Iso3             string            `json:"iso3"`
-		PopulationCounts []utils.YearValue `json:"populationCounts"`
+		Country          string             `json:"country"`
+		Code             string             `json:"code"`
+		Iso3             string             `json:"iso3"`
+		PopulationCounts []utils2.YearValue `json:"populationCounts"`
 	} `json:"data"`
 }
 
 func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
-	url := utils.CountriesNowApiUrl + "countries/population"
+	url := utils2.CountriesNowApiUrl + "countries/population"
 
 	isoCode := r.PathValue("two_letter_country_code")
 	limit := r.URL.Query().Get("limit")
@@ -77,7 +77,7 @@ func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	// Process the data to match your PopulationInfo struct
-	population := utils.PopulationInfo{
+	population := utils2.PopulationInfo{
 		Values: filteredValues,
 	}
 
@@ -90,7 +90,7 @@ func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
 		population.Mean = sum / len(filteredValues)
 	}
 
-	response := utils.APIResponse{
+	response := utils2.APIResponse{
 		Error:   false,
 		Message: "Population data retrieved successfully",
 		Data:    population,
@@ -107,7 +107,7 @@ func HandlePopulation(w http.ResponseWriter, r *http.Request) error {
 }
 
 func getIso3(isoCode string) (string, error) {
-	isoCodeResponse, err := http.Get(utils.RestCountriesApiUrl + isoCode + "?fields=cca3")
+	isoCodeResponse, err := http.Get(utils2.RestCountriesApiUrl + isoCode + "?fields=cca3")
 	if err != nil {
 		log.Printf("Error contacting API: %v", err)
 		return "", errors.New("error contacting API")
@@ -126,7 +126,7 @@ func getIso3(isoCode string) (string, error) {
 	return result.Cca3, nil
 }
 
-func filterByYearLimit(values []utils.YearValue, limit string) ([]utils.YearValue, error) {
+func filterByYearLimit(values []utils2.YearValue, limit string) ([]utils2.YearValue, error) {
 	if limit == "" {
 		return values, nil
 	}
@@ -148,7 +148,7 @@ func filterByYearLimit(values []utils.YearValue, limit string) ([]utils.YearValu
 	}
 
 	// Filter the data
-	var filtered []utils.YearValue
+	var filtered []utils2.YearValue
 	for _, v := range values {
 		if v.Year >= startYear && v.Year <= endYear {
 			filtered = append(filtered, v)
