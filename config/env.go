@@ -19,8 +19,11 @@ func loadEnvVariables() {
 // Returns:
 // - A string representing the port number.
 func GetPort() string {
-
-	loadEnvVariables()
+	// Load .env only if running locally
+	if os.Getenv("RENDER") == "" { // Render automatically sets this variable
+		log.Println("Running locally. Loading environment variables from .env file")
+		loadEnvVariables()
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
