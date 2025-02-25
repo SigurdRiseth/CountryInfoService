@@ -55,7 +55,6 @@ func makeHTTPHandleFunc(f apiFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := f(w, r); err != nil {
 			log.Printf("Error: %v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 			// TODO: switch on error type and return appropriate status code
 		}
 	}

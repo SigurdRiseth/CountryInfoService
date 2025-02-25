@@ -35,7 +35,6 @@ type NativeName struct {
 	Common   string `json:"common"`
 }
 
-// HandleInfo handles the country info request and returns data in JSON format.
 func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
@@ -46,33 +45,30 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 
 	// Fetch country info and handle errors
 	info, err := getCountryInfo(isoCode, cityLimitStr)
-	if err != nil {
-		return err
-	}
 
+	// Construct response based on error presence
 	apiResponse := utils.APIResponse{
-		Error:   false,
+		Error:   err != nil,
 		Message: "Country information retrieved successfully",
 		Data:    info,
 	}
 
-	// Marshal the response into JSON
-	response, err := json.Marshal(apiResponse)
+	// Set error message if an error occurred
 	if err != nil {
-		return err
+		apiResponse.Message = err.Error()
+		apiResponse.Data = nil
 	}
 
-	// Send the JSON response with HTTP status OK
+	// Marshal and send the JSON response
+	response, _ := json.Marshal(apiResponse)
 	w.WriteHeader(http.StatusOK)
-	if _, err := w.Write(response); err != nil {
-		return err
-	}
-
-	return nil
+	w.Write(response)
+	return err
 }
 
 // getCountryInfo fetches country data from an external API.
 func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
+	// Construct the URL for the external API
 	url := utils.RestCountriesApiUrl + isoCode + utils.RestCountriesFilter
 	log.Printf("Fetching data from API: %s for country code: %s with limit %s", url, isoCode, cityLimitStr)
 
@@ -153,17 +149,20 @@ func limitCities(cities []string, limitString string) []string {
 // - *CountryInfoAPIResponse: A pointer to the CountryInfoAPIResponse struct containing the city data.
 // - error: An error if the request fails or the API returns an error.
 func fetchCitiesFromAPI(isoCode string) (*utils.APIResponseString, error) {
+	// Construct the URL for the external API
 	url := utils.CountriesNowApiUrl + "countries/cities"
 	log.Println("Fetching city data from API:", url)
 
+	// Construct the request payload
 	requestBody, err := json.Marshal(map[string]string{"iso2": isoCode})
 	if err != nil {
-		return nil, errors.New("failed to encode request payload")
+		return nil, errors.New("failed to encode request payload for city data")
 	}
 
+	// Make HTTP request to the external API
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
-		return nil, errors.New("failed to reach Countries-Now API")
+		return nil, errors.New("failed to reach Countries-Now API for city data")
 	}
 	defer resp.Body.Close()
 
