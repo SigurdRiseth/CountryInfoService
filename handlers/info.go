@@ -35,6 +35,26 @@ type NativeName struct {
 	Common   string `json:"common"`
 }
 
+// HandleInfo processes requests to retrieve country information based on an ISO2 country code.
+// It fetches details about the country, including cities, with an optional limit on the number of cities returned.
+//
+// Request Parameters:
+//   - "two_letter_country_code" (path parameter): The ISO2 country code (e.g., "US" for the United States).
+//   - "limit" (query parameter, optional): A string representing the number of cities to retrieve.
+//
+// Response:
+//   - Returns a JSON response containing country information or an error message.
+//
+// HTTP Status Codes:
+//   - 200 OK: Successfully retrieved country information.
+//   - 400 Bad Request: Invalid input parameters.
+//   - 500 Internal Server Error: Failed to retrieve country information.
+//
+// Example Usage:
+//
+//	GET /info/US?limit=10 -> Retrieves information about the United States with a limit of 10 cities.
+//
+// Returns an error if fetching country information fails.
 func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 	// Set response content type to JSON
 	w.Header().Set("Content-Type", "application/json")
@@ -66,7 +86,34 @@ func HandleInfo(w http.ResponseWriter, r *http.Request) error {
 	return err
 }
 
-// getCountryInfo fetches country data from an external API.
+// getCountryInfo retrieves country information from an external API based on the provided ISO2 country code.
+// It fetches details such as country name, continents, population, languages, borders, flag, capital, and cities.
+//
+// Parameters:
+//   - isoCode (string): The ISO2 country code (e.g., "US" for the United States).
+//   - cityLimitStr (string): A string representing the maximum number of cities to retrieve (optional).
+//
+// Returns:
+//   - utils.CountryInfo: A struct containing the retrieved country information.
+//   - error: An error if the request fails or the response cannot be processed.
+//
+// Function Workflow:
+//   - Constructs the API request URL.
+//   - Makes an HTTP GET request to fetch country data.
+//   - Decodes the JSON response into a Country struct.
+//   - Extracts relevant country data into a utils.CountryInfo struct.
+//   - Fetches cities using an additional API call and applies an optional limit.
+//
+// Errors:
+//   - Returns an error if the API request fails, the response is invalid, or JSON decoding fails.
+//
+// Example Usage:
+//
+//	info, err := getCountryInfo("US", "10")
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	fmt.Println(info)
 func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	// Construct the URL for the external API
 	url := utils.RestCountriesApiUrl + isoCode + utils.RestCountriesFilter
@@ -117,14 +164,25 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 	return info, nil
 }
 
-// limitCities ensures the returned list of cities does not exceed the given limit.
+// limitCities limits the number of cities returned based on a given limit string.
+// If the limit is invalid or not provided, a default limit is used.
 //
 // Parameters:
-// - cities: A slice of strings representing the list of cities.
-// - limitString: A string representing the maximum number of cities to return.
+//   - cities ([]string): A slice of city names to be limited.
+//   - limitString (string): The limit as a string; expected to be a positive integer.
 //
 // Returns:
-// - A slice of strings containing the limited list of cities.
+//   - []string: A slice of cities, limited to the specified number.
+//
+// Behavior:
+//   - Converts `limitString` to an integer. If conversion fails or limit is non-positive, defaults to `utils.DefaultCityLimit`.
+//   - Ensures that the limit does not exceed the available number of cities.
+//   - Returns the original slice if its length is less than or equal to the limit.
+//
+// Example Usage:
+//
+//	cities := []string{"Oslo", "Bergen", "Trondheim", "Stavanger"}
+//	limitedCities := limitCities(cities, "2")  // Output: ["Oslo", "Bergen"]
 func limitCities(cities []string, limitString string) []string {
 	// Convert limitString to an integer, fallback to defaultLimit on error
 	limit, err := strconv.Atoi(limitString)
@@ -140,14 +198,29 @@ func limitCities(cities []string, limitString string) []string {
 	return cities
 }
 
-// fetchCitiesFromAPI fetches city data from the Countries-Now API based on the provided ISO country code.
+// fetchCitiesFromAPI fetches a list of cities for a given country ISO2 code from the Countries-Now API.
 //
 // Parameters:
-// - isoCode: A string representing the ISO 3166-1 alpha-2 country code.
+//   - isoCode (string): The two-letter country code (ISO2).
 //
 // Returns:
-// - *CountryInfoAPIResponse: A pointer to the CountryInfoAPIResponse struct containing the city data.
-// - error: An error if the request fails or the API returns an error.
+//   - *utils.APIResponseString: A pointer to the API response containing city data if successful, otherwise nil.
+//   - error: An error if the request fails or the response contains an error message.
+//
+// Behavior:
+//   - Constructs a request payload with the given `isoCode`.
+//   - Sends a POST request to the Countries-Now API to retrieve city data.
+//   - Handles potential errors, including JSON encoding/decoding issues and API response failures.
+//   - Checks if the API response contains an error and returns an appropriate error message.
+//
+// Example Usage:
+//
+//	response, err := fetchCitiesFromAPI("NO")
+//	if err != nil {
+//	    log.Println("Error fetching cities:", err)
+//	} else {
+//	    log.Println("Cities:", response.Data)
+//	}
 func fetchCitiesFromAPI(isoCode string) (*utils.APIResponseString, error) {
 	// Construct the URL for the external API
 	url := utils.CountriesNowApiUrl + utils.CountriesNowCityEndpoint
