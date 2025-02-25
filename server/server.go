@@ -33,7 +33,7 @@ func setupRouter() *http.ServeMux {
 
 	// Define the endpoints
 	router.HandleFunc(utils.GetInfoPath(""), makeHTTPHandleFunc(handler.HandleInfo))
-	router.HandleFunc(utils.GetPopulationPath(""), makeHTTPHandleFunc(handler.HandlePopulation))
+	router.HandleFunc(utils.GetPopulationPath(""), handler.HandlePopulation)
 	router.HandleFunc(utils.GetStatusPath(), makeHTTPHandleFunc(handler.HandleStatus))
 	router.HandleFunc("/", handler.DefaultHandler)
 

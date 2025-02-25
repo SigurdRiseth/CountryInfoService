@@ -82,8 +82,8 @@ func getCountryInfo(isoCode, cityLimitStr string) (utils.CountryInfo, error) {
 
 	// Ensure the response is successful
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("API returned status code: %d", resp.StatusCode)
-		return utils.CountryInfo{}, errors.New("API returned error status code")
+		log.Printf("Rest-Countries-API returned status code: %d", resp.StatusCode)
+		return utils.CountryInfo{}, fmt.Errorf("API returned error status code %d", resp.StatusCode)
 	}
 
 	// Decode the JSON response into the appropriate struct
@@ -150,7 +150,7 @@ func limitCities(cities []string, limitString string) []string {
 // - error: An error if the request fails or the API returns an error.
 func fetchCitiesFromAPI(isoCode string) (*utils.APIResponseString, error) {
 	// Construct the URL for the external API
-	url := utils.CountriesNowApiUrl + "countries/cities"
+	url := utils.CountriesNowApiUrl + utils.CountriesNowCityEndpoint
 	log.Println("Fetching city data from API:", url)
 
 	// Construct the request payload
