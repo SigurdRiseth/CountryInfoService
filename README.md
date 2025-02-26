@@ -1,21 +1,39 @@
 # CountryInfoService
 
-> **CountryInfoService** is a simple REST API that provides country-related information, using external APIs.
+> **CountryInfoService** is a simple REST API that provides country-related information  by integrating external APIs.
 
 The code is deployed to Render and can be accessed at [https://countryinfoservice.onrender.com/](https://countryinfoservice.onrender.com/).
 
 ## Features
+
+The service provides the following endpoints:
+
 - **Country Information**: Get the name, capital, population, cities of a given country.
   - Optional: Limit the amount of cities returned.
 - **Population Information**: Get the population history of a given country.
    - Optional: Get the population history for a given time interval.
 - **Status Information**: Get the status of the service and external APIs.
 
+For more information, see the [API Endpoints](#api-endpoints) section.
+
 ### External APIs
 The project integrates the following external APIs to provide country-related information:
 
 - **CountriesNow API**: Used to fetch details about countries, including historical population data and city listings.
 - **RestCountries API**: Supplies additional country information, such as capitals, bordering nations, and national flags.
+
+### Error Handling
+
+All API responses follow a structured `JSON` format. If an error occurs, the response will include an error flag and a descriptive message.
+
+**Example:**
+```json
+{
+  "error": true,
+  "message": "error fetching cities",
+  "data": null
+}
+```
 
 ### known issues
 
