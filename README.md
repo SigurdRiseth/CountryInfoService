@@ -1,6 +1,8 @@
 # CountryInfoService
 
-**CountryInfoService** is a simple REST API that provides country-related information, including the status of external country APIs. The service returns details such as the uptime of the service, API status, and version.
+> **CountryInfoService** is a simple REST API that provides country-related information, using external APIs.
+
+The code is deployed to Render and can be accessed at [https://countryinfoservice.onrender.com/](https://countryinfoservice.onrender.com/).
 
 ## Features
 - **Country Information**: Get the name, capital, population, cities of a given country.
@@ -8,6 +10,17 @@
 - **Population Information**: Get the population history of a given country.
    - Optional: Get the population history for a given time interval.
 - **Status Information**: Get the status of the service and external APIs.
+
+### External APIs
+The project integrates the following external APIs to provide country-related information:
+
+- **CountriesNow API**: Used to fetch details about countries, including historical population data and city listings.
+- **RestCountries API**: Supplies additional country information, such as capitals, bordering nations, and national flags.
+
+### known issues
+
+- The `/info` endpoint does not return data for South Sudan (`SS`/`SSD`). This is due to the absence of South Sudan in the `CountriesNow API`, preventing the retrieval of its city data.
+- The "default" handler does _not_ function correctly on Render, as it attempts to serve the `index.html` file from the `static` directory, which is not currently working.
 
 ## Requirements
 
@@ -30,7 +43,7 @@
     go mod tidy
     ```
 
-3.	Create a .env file for environment variables (if necessary). Here’s an example of what you might need to include:
+3.	(optional) Create a .env file for environment variables. Here’s an example of what you might want to include:
 
     ```bash
     PORT=8080
